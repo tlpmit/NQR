@@ -1,0 +1,130 @@
+All done — 39/39 tests passing. The repo now has working Drake and MuJoCo interfaces for both RBY1 and Spot, plus the Pinocchio+Coal+Meshcat kinematic simulator, installable with pixi install and tested with pixi run test (~10 s).
+
+Architecture
+
+All five backends speak one pickle-over-ZMQ protocol (qr_robots/common/zmq_sim.py), which the old repo had informally between its RBY1 MuJoCo/Drake sims. I factored it out so there is a single SimClient, one set of sensor/control modules, and one generic ZmqVirtualMoman — each concrete robot (Rby1MujocoVirtualMoman, Rby1DrakeVirtualMoman, SpotMujocoVirtualMoman, SpotDrakeVirtualMoman, Rby1/SpotKinsimVirtualMoman) is ~30 lines of configuration. Conf vectors are canonical per robot (RBY1 31-vector, Spot 10-vector) and identical across backends. I deliberately dropped the old QDDL/Roboverse scene-building dependency: virtual robots take a plain objects dict, and camera extrinsics now come from the sim server (OpenCV convention) instead of the HPN robot model.
+
+- MuJoCo (qr_robots/mujoco/): generic MujocoRobotSim + per-robot spec. RBY1 uses the existing MJCF with the mocap-welded holonomic base. Spot had no MJCF, so its Drake URDF is rewritten at load time and position actuators/cameras/floor are injected via MjSpec.
+- Drake (qr_robots/drake/): generic DrakeRobotSim on MakeHardwareStation with the scenario YAMLs from the old assets; the old Spot implementation (multiprocessing pipes) was rebuilt in the RBY1 style. Base trajectories are now auto-timed from velocity limits — the old fixed 0.5 s default is why the old code logged base-tracking timeouts.
+- Kinematic sim (qr_kinsim/): KinematicWorld (Pinocchio FK + Coal collision + Meshcat display) with object attachment — gripper close grasps the nearest object within reach, open releases it, and attached objects follow the chain (grasp/push modeling per CLAUDE.md). Collision checks use a small negative margin so resting contact isn't flagged. pixi run kinsim-demo shows RBY1 pick-and-carry in Meshcat.
+
+Things you should know
+
+- Your shell's PYTHONPATH points at the old repos and silently shadows this repo's packages. The pixi env clears it on activation, so always use pixi run; bare python will import old-repo code.
+- pixi install needs a workaround on this machine: ~/Library/Caches/rattler/.../pypi/mujoco is root-owned (past sudo run), so fresh solves fail. I used PIXI_CACHE_DIR=$HOME/.cache/pixi-cache pixi install; the permanent fix is sudo chown -R $(whoami) ~/Library/Caches/rattler, which needs you.
+- Assets are 180 MB copied from ../QR (rby1a MJCF+URDF meshes, both Drake description packages). Worth deciding on git-lfs or a download step before the first commit (the repo isn't git-initialized yet).
+- Kinsim has no cameras by design — perception comes from the dynamic backends.
+- Some test details encode real physics: Spot's Drake base is force-controlled, so driving into the test table genuinely blocks it (the MuJoCo mocap base would teleport through).
+
+CLAUDE.md and README are updated with commands, the sim architecture, and these gotchas. Natural next steps would be qr_planning (OMPL2 over KinematicWorld) and the QDDL → objects-dict scene loader.
+
+
+Set QR_TEST_MODE=display — I wired it through all the test fixtures (they were hard-coded headless before). All 39 tests still pass headless, and I verified each display path works.
+
+# Kinematic sim / Drake tests — opens a Meshcat server; run with -s to see the URL
+QR_TEST_MODE=display pixi run pytest tests/test_kinsim.py -s
+
+# In-process MuJoCo tests — the viewer window needs mjpython on macOS
+QR_TEST_MODE=display pixi run mjpython -m pytest tests/test_mujoco_rby1.py -s
+
+# ZMQ virtual-robot tests — plain pytest works; the sim server subprocess
+# is launched with mjpython automatically
+QR_TEST_MODE=display pixi run pytest tests/test_zmq_virtual_robot.py -s
+
+Two practical notes:
+
+- Tests run fast (the whole suite is ~10 s), so a full run flashes by. Display mode is most useful on a single test, e.g. QR_TEST_MODE=display pixi run mjpython -m pytest tests/test_mujoco_spot.py::test_arm_trajectory. In the kinematic sim, display mode also turns on trajectory animation (50 Hz interpolation instead of instant teleporting), so those motions are actually watchable.
+- For Meshcat-based viewers (Drake, kinsim) you need -s so pytest doesn't swallow the printed URL, and the Meshcat server dies when the test process exits — so for leisurely inspection of a scene, the standalone servers are better: pixi run python -m qr_kinsim.sim --robot rby1 --mode display or pixi run kinsim-demo.
+
+The mechanism is documented in tests/conftest.py and CLAUDE.md.
+
+Done — there's now a QR_TEST_MODE=interactive mode that opens the viewer, waits for Enter before executing, and waits for Enter again before closing, so the window doesn't vanish under you:
+
+# MuJoCo (viewer window; mjpython needed on macOS for in-process tests)
+QR_TEST_MODE=interactive pixi run mjpython -m pytest tests/test_mujoco_rby1.py -s
+
+# Kinematic sim / Drake (prints the Meshcat URL in the prompt — open it, then press Enter)
+QR_TEST_MODE=interactive pixi run pytest tests/test_kinsim.py -s
+
+# ZMQ virtual-robot tests work with plain pytest (the server gets mjpython automatically)
+QR_TEST_MODE=interactive pixi run pytest tests/test_zmq_virtual_robot.py -s
+
+What you'll see:
+
+[kinsim rby1] viewer ready (http://127.0.0.1:7001/static/) — press Enter to run …
+...tests execute, motions animate...
+[kinsim rby1] done — press Enter to close …
+
+Details worth knowing:
+
+- It requires -s; if you forget, pytest aborts immediately with a clear message rather than hanging on an invisible prompt (the prompts need a real terminal, which pytest's output capture blocks).
+- The prompts wrap each sim fixture: the MuJoCo/Drake/ZMQ test files share one sim per module, so you get one start/end pair around the whole file; the kinsim tests build a fresh scene per test, so each test prompts separately.
+- In interactive (and display) mode the kinematic sim animates trajectories at 50 Hz instead of teleporting, so motions are actually watchable. For Drake, the Meshcat scene stays live between tests.
+- Headless behavior is unchanged — the full suite still passes (39/39) with no prompts.
+
+Everything is implemented in tests/conftest.py (interactive_pause / sim_fixture) and documented there and in CLAUDE.md.
+
+==========
+
+Done — the perception pipeline and OBM are ported, connected to all three simulators' images, and verified against ground truth. Full suite: 47/47 passing (7 new perception/OBM tests).
+
+What was ported (staying close to the old code)
+
+- src/qr_perception/ — PercPipelineUncertainSegComplete plus the modules the sim configuration uses: SimSegmenter (label-image segmentation), ProjectionCompletion (extrusion + convex hull shape completion), SurfaceFinder (horizontal-plane detection for tables), RGBDDepthFilter, and the RGB/curtailed featurizers — all essentially verbatim. pipelines.py adds make_sim_perception_pipeline() / make_sim_obm(), mirroring the old run.py wiring.
+- src/qr_belief/ — the OBM: ObjectBasedDataAssociationFilter (Hungarian-algorithm data association), BasicMatchScoreFunction/BasicMergeFunction/BasicBeliefInit, ml_object_set, and the goal memory module — verbatim except import fixes.
+- src/qr_utils/ — sensor.py + raster_scan.py (ray-traced visibility reasoning for existence confidence).
+
+Deliberate deviations (each isolated and documented in CLAUDE.md): pycddlib has no wheels, so hull intersection uses scipy HalfspaceIntersection (verified exact: IoM of half-overlapping cubes = 0.500); Roboverse's GJK quick-reject became a conservative AABB test; the VLM designation function got a no-op stand-in; new deps are opencv, open3d, networkx, ncollpyde.
+
+What the tests verify against ground truth
+
+With a table + red/blue blocks viewed by RBY1's head camera, the OBM ends up with exactly 1 surface + 2 things, and: block centers within 2 cm of get_world_state() (typically 1–2 mm), extents within 1.5 cm of true cube sizes, colors matched per object. Dynamics are right too: re-observation doesn't duplicate (confidences rise), a 3 cm nudge gets matched and updated (same hypothesis set, new pose), and a teleport produces a fresh hypothesis at the new pose while the stale one loses confidence. The same pipeline is tested on Drake images and kinsim (render-bridge) images.
+
+Two cross-backend fixes this surfaced
+
+- Label conventions unified: positive ids only for free scene objects; robot, fixtures, background = -1. Drake natively labels every body including the robot (perception was "detecting" 10 robot links), and MuJoCo used a name-based floor/table hack — both now remap in get_camera_image. Surfaces are intentionally not labeled; SurfaceFinder finds them geometrically.
+- Drake point_head_at was aiming at the robot's own base (tilt pegged at the joint limit) because the generic code guessed the camera mount frame. It now computes the exact camera-in-mount transform from the live station state, with the mount body (rby1_camera_mount) in the robot spec.
+
+One nuance worth knowing: the old OBM confidence decay (×0.9 per contradicting observation, from the original code) means a stale hypothesis after a teleport takes ~18 observations to fall below the deletion threshold — the test asserts decay, not deletion. In normal operation the policy's transition predictions (transition_update) would move the hypothesis instead.
+
+=====
+
+No — the NQR codebase has zero runtime dependencies on HPN, Roboverse, or any other old-repo code. A full scan of src/ finds only three mentions, all of which are comments documenting what replaced them:
+
+1. qr_kinsim/world.py — docstring noting that KinematicWorld is the replacement for the HPN/Roboverse kinematic simulator.
+2. qr_utils/pcd_utilities.py — comment noting the AABB quick-reject that replaced Roboverse's gjk2 GJK test.
+3. qr_utils/misc_utils.py — docstring crediting HPN's Utils.miscUtil as the origin of the inlined dict_add helper.
+
+I also scanned for the indirect ones that existed in the old code (skrobot, TampWorld, hpn_qddl_read, jacinle, qaa, Domains.tamp, lazy in-function imports) — nothing.
+
+The places where dependencies were cut, for the record:
+
+- Virtual robots: the old RBY1 MuJoCo/Drake robots built scenes through Domains.tamp QDDL parsing and Roboverse's Physical/make_robot, and computed camera extrinsics from the Roboverse robot model. The new ones take a plain objects dict and get extrinsics from the sim server.
+- Kinematic simulation: Roboverse itself is replaced by qr_kinsim (Pinocchio + Coal + Meshcat).
+- Perception/OBM ports: ml_object_set used Roboverse's shapely wrappers (→ shapely.geometry directly) and HPN's dict_add (→ inlined); sensor.py used Roboverse's rotation_matrix (→ trimesh.transformations, identical function); pcd_utilities lazily imported Roboverse's GJK (→ AABB quick-reject, with the exact cdd/scipy hull intersection still deciding the true answer).
+
+There's also a structural guarantee this stays true: your shell's PYTHONPATH points at the old repos, but the pixi environment clears it on activation — so all 47 passing tests run in an environment where HPN/Roboverse simply aren't importable. If a hidden dependency existed, the suite would fail with ModuleNotFoundError.
+
+The only remaining ties to the old world are assets (the rby1a/spot model files copied into assets/) and the CLAUDE.md pointers to ../QR as reference material for future ports (belief, policy, mapping) — those still depend on the old repo in the sense that they haven't been ported yet.
+
+========
+
+The belief module is fully ported and tested — 51/51 tests passing, including 4 new belief tests verifying the spatial memory against scene geometry.
+
+What was ported
+
+- qr_mapping C++ occupancy grid — the big piece. The C++ sources, pybind11 bindings, and vendored deps (common_robotics_utilities, voxelized_geometry_tools) came over essentially verbatim, along with the old repo's build approach: the repo's build backend switched from hatchling to scikit-build-core, so pixi install now runs CMake, which fetches the Drake C++ SDK (cached under .pixi/fetchcontent) and compiles the module. It works — on your machine it even auto-selects the OpenCL voxelizer on the M4 GPU.
+- Spatial memory (OldHPNSpatialMemoryModule + the VV view-volume class) — close port. It maintains ternary occupancy (occupied / free / unknown-"shadow") from depth images using three voxel grids to handle max-range readings, exactly as before. The constructor additionally accepts explicit workspace/shadow arrays since QDDL problem loading isn't ported yet (the static_domain_info path is preserved).
+- Robot memory (SimpleRobotMemoryModule) — verbatim except it now accepts our plain chain-dict confs alongside the old Roboverse Conf objects. Dummy agent module and the BeliefModule wiring (qr_belief/builder.py, mirroring old run.py) complete the set.
+
+Deferred to the policy port (documented in the code): HPN's VV_Regions (region queries over the voxel grid, consumed by the HPN policy) and the Roboverse costmap (config-gated off in the old repo anyway). The phys-based shadow-carving methods are ported intact but only the policy exercises them.
+
+Two version pins that matter
+
+Getting pydrake objects (Meshcat, Rgba, images) across the pybind boundary required exact ABI agreement, now pinned in pyproject.toml with comments: pip drake==1.45.0 must match the fetched SDK, and conda pybind11 <2.14 must match pydrake's pybind11 internals — the solver had picked pybind11 3.0, which silently builds but can't share Drake types (that was the one build failure I hit).
+
+What the tests verify against ground truth
+
+Driving belief.update(Action(), None, observation) with RBY1 head-camera images: the block's visible faces and the table top are occupied in the voxel grid, air the camera saw through is free, under the table and the block's interior are shadow (correctly unknown — depth only sees surfaces), and after moving the block, re-observation carves the old location free and marks the new one occupied. Object memory and robot memory match get_world_state() as before.
+
+Per CLAUDE.md's module list, what remains unported is now: Policy (HPN/BTAMP), qr_planning (OMPL2), QDDL problem definitions, and Main/Run orchestration.

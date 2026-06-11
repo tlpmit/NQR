@@ -1,0 +1,65 @@
+<?xml version="1.0"?>
+<sdf version="1.7">
+<world name="w">
+<model name="aidan_world">
+<static>true</static>
+<link name="origin">
+	<inertial>
+		<mass>1.0</mass>
+		<inertia>
+			<ixx>1.0</ixx><ixy>0.0</ixy><ixz>0</ixz>
+			<iyy>1.0</iyy><iyz>0.0</iyz><izz>1.0</izz>
+		</inertia>
+	</inertial>
+	<visual name="b1">
+		<pose>1.0 2.05 1.0 0.0 0.0 0.0</pose>
+		<geometry>
+			<box><size>4.0 0.1 2.0</size></box>
+		</geometry>
+	</visual>
+	<collision name="b1">
+		<pose>1.0 2.05 1.0 0.0 0.0 0.0</pose>
+		<geometry>
+			<box><size>4.0 0.1 2.0</size></box>
+		</geometry>
+	</collision>
+	<visual name="b2">
+		<pose>1.0 -2.05 1.0 0.0 0.0 0.0</pose>
+		<geometry>
+			<box><size>4.0 0.1 2.0</size></box>
+		</geometry>
+	</visual>
+	<collision name="b2">
+		<pose>1.0 -2.05 1.0 0.0 0.0 0.0</pose>
+		<geometry>
+			<box><size>4.0 0.1 2.0</size></box>
+		</geometry>
+	</collision>
+	<visual name="b3">
+		<pose>3.05 0.0 1.0 0.0 0.0 0.0</pose>
+		<geometry>
+			<box><size>0.1 4.0 2.0</size></box>
+		</geometry>
+	</visual>
+	<collision name="b3">
+		<pose>3.05 0.0 1.0 0.0 0.0 0.0</pose>
+		<geometry>
+			<box><size>0.1 4.0 2.0</size></box>
+		</geometry>
+	</collision>
+	<visual name="b4">
+		<pose>-1.05 0.0 1.0 0.0 0.0 0.0</pose>
+		<geometry>
+			<box><size>0.1 4.0 2.0</size></box>
+		</geometry>
+	</visual>
+	<collision name="b4">
+		<pose>-1.05 0.0 1.0 0.0 0.0 0.0</pose>
+		<geometry>
+			<box><size>0.1 4.0 2.0</size></box>
+		</geometry>
+	</collision>
+</link>
+</model>
+</world>
+</sdf>

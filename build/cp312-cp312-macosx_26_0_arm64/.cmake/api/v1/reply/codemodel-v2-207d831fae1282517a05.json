@@ -1,0 +1,232 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-.-Release-f5ebdc15457944623624.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.15"
+					},
+					"projectIndex" : 0,
+					"source" : "."
+				},
+				{
+					"build" : "src/qr_mapping",
+					"childIndexes" : 
+					[
+						2,
+						3
+					],
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-src.qr_mapping-Release-c87ca34ac642e87a08d8.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "src/qr_mapping",
+					"targetIndexes" : 
+					[
+						2,
+						4
+					]
+				},
+				{
+					"build" : "src/qr_mapping/dependencies/common_robotics_utilities",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-src.qr_mapping.dependencies.common_robotics_utilities-Release-96d3bf43f667d9188196.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 2,
+					"source" : "src/qr_mapping/dependencies/common_robotics_utilities",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						3
+					]
+				},
+				{
+					"build" : "src/qr_mapping/dependencies/voxelized_geometry_tools",
+					"hasInstallRule" : true,
+					"jsonFile" : "directory-src.qr_mapping.dependencies.voxelized_geometry_tools-Release-d2cc2401329263799078.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.5"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 3,
+					"source" : "src/qr_mapping/dependencies/voxelized_geometry_tools",
+					"targetIndexes" : 
+					[
+						5,
+						6,
+						7,
+						8,
+						9
+					]
+				}
+			],
+			"name" : "Release",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "NQR"
+				},
+				{
+					"childIndexes" : 
+					[
+						2,
+						3
+					],
+					"directoryIndexes" : 
+					[
+						1
+					],
+					"name" : "qr_mapping",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						2,
+						4
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						2
+					],
+					"name" : "common_robotics_utilities",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						3
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						3
+					],
+					"name" : "voxelized_geometry_tools",
+					"parentIndex" : 1,
+					"targetIndexes" : 
+					[
+						5,
+						6,
+						7,
+						8,
+						9
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 2,
+					"id" : "clustering_example::@43c697c2165717984913",
+					"jsonFile" : "target-clustering_example-Release-7bf379455403feb0bcb8.json",
+					"name" : "clustering_example",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "common_robotics_utilities::@43c697c2165717984913",
+					"jsonFile" : "target-common_robotics_utilities-Release-d2977f77623cd9bddfe2.json",
+					"name" : "common_robotics_utilities",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "cpp::@392cec4045104cc750bc",
+					"jsonFile" : "target-cpp-Release-6e705edee2e378e7e30a.json",
+					"name" : "cpp",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 2,
+					"id" : "dtw_example::@43c697c2165717984913",
+					"jsonFile" : "target-dtw_example-Release-689452d005a56df0cad2.json",
+					"name" : "dtw_example",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "qr_mapping::@392cec4045104cc750bc",
+					"jsonFile" : "target-qr_mapping-Release-0598eaf922cace409790.json",
+					"name" : "qr_mapping",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "voxelized_geometry_tools::@cce8100bf8b320faf313",
+					"jsonFile" : "target-voxelized_geometry_tools-Release-6c0327f1a4b6db1cbda4.json",
+					"name" : "voxelized_geometry_tools",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "voxelized_geometry_tools_cuda_voxelization_helpers::@cce8100bf8b320faf313",
+					"jsonFile" : "target-voxelized_geometry_tools_cuda_voxelization_helpers-Release-6d0192fca7acb9d282cb.json",
+					"name" : "voxelized_geometry_tools_cuda_voxelization_helpers",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "voxelized_geometry_tools_dummy_opencl_voxelization_helpers::@cce8100bf8b320faf313",
+					"jsonFile" : "target-voxelized_geometry_tools_dummy_opencl_voxelization_helpers-Release-b8c763007b1d95d5cee2.json",
+					"name" : "voxelized_geometry_tools_dummy_opencl_voxelization_helpers",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "voxelized_geometry_tools_opencl_voxelization_helpers::@cce8100bf8b320faf313",
+					"jsonFile" : "target-voxelized_geometry_tools_opencl_voxelization_helpers-Release-7dae3530e114da3cf7a9.json",
+					"name" : "voxelized_geometry_tools_opencl_voxelization_helpers",
+					"projectIndex" : 3
+				},
+				{
+					"directoryIndex" : 3,
+					"id" : "voxelized_geometry_tools_pointcloud_voxelization::@cce8100bf8b320faf313",
+					"jsonFile" : "target-voxelized_geometry_tools_pointcloud_voxelization-Release-117c4d651a729222f90c.json",
+					"name" : "voxelized_geometry_tools_pointcloud_voxelization",
+					"projectIndex" : 3
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/Users/tlp/Documents/GitHub/NQR/build/cp312-cp312-macosx_26_0_arm64",
+		"source" : "/Users/tlp/Documents/GitHub/NQR"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 7
+	}
+}

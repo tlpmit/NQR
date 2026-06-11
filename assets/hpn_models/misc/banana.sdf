@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+       <world name="banana_world">
+       	      <model name="banana">
+		  <static>false</static>
+			<pose>0.0031472998671233654 -0.004283192101866007 0.7528123259544373 0 0 1.5</pose>
+			<link name="banana">
+				<collision name="banana_collision">
+					<geometry>
+					  <mesh>
+					    <uri>011_banana/textured.obj</uri>
+					    <scale>1.0 1.0 1.0</scale>
+					  </mesh>
+					</geometry>
+				</collision>
+				<visual name="banana_visual">
+					<geometry>
+					  <mesh>
+					    <uri>011_banana/textured.obj</uri>
+					    <scale>1.0 1.0 1.0</scale>
+					  </mesh>
+					</geometry>
+				</visual>
+			</link>
+		</model>
+       </world>
+</sdf>

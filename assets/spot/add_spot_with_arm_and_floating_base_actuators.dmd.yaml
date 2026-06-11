@@ -1,0 +1,21 @@
+directives:
+- add_model:
+    name: spot
+    file: package://qr_assets/spot/spot_with_arm_and_floating_base_actuators.urdf
+    default_joint_positions:
+        # arm_sh1: [-3.1]
+        # arm_el0: [3.1]
+        arm_sh0: [2.26974487e-04]
+        arm_sh1: [-2.30147457e+00]
+        arm_el0: [1.62356675e+00]
+        arm_el1: [7.04407692e-03]
+        arm_wr0: [1.55041754e+00]
+        arm_wr1: [-4.28676605e-03]
+        arm_f1x: [-1.543833]
+
+# https://support.bostondynamics.com/s/article/Spot-Arm-specifications-and-concepts
+- add_frame:
+    name: hand
+    X_PF:
+        base_frame: spot::arm_link_wr1
+        translation: [0.19557, 0, 0]

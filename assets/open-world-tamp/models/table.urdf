@@ -1,0 +1,116 @@
+<?xml version="1.0" ?>
+<robot name="table1">
+    <material name="table_top_color">
+        <color rgba="0.6 0.4 0.2 1"></color>
+    </material>
+    <material name="table_leg_color">
+        <color rgba="0.1 0.1 0.75 1"></color>
+    </material>
+
+    <link name="base" />
+
+    <joint name="top_joint" type="fixed">
+        <parent link="base" />
+        <child link="top" />
+    </joint>
+    <joint name="leg_joint_1" type="fixed">
+        <parent link="base" />
+        <child link="leg_1" />
+    </joint>
+    <joint name="leg_joint_2" type="fixed">
+        <parent link="base" />
+        <child link="leg_2" />
+    </joint>
+    <joint name="leg_joint_3" type="fixed">
+        <parent link="base" />
+        <child link="leg_3" />
+    </joint>
+    <joint name="leg_joint_4" type="fixed">
+        <parent link="base" />
+        <child link="leg_4" />
+    </joint>
+
+    <link name="top">
+        <visual name="table_top_visual">
+            <origin xyz="0.0 0.0 0.715" rpy="0 0 0" />
+            <geometry>
+                <box size="0.6 1.2 0.03" />
+            </geometry>
+            <material name="table_top_color" />
+        </visual>
+        <collision name="table_top_collision">
+            <origin xyz="0.0 0.0 0.715" rpy="0 0 0" />
+            <geometry>
+                <box size="0.6 1.2 0.03" />
+            </geometry>
+            <drake:proximity_properties>
+                <drake:mu_dynamic value="0.6" />
+                <drake:mu_static value="0.6" />
+                <drake:hydroelastic_modulus value="1.0e5" />
+                <drake:hunt_crossley_dissipation value="10.0" />
+                <drake:compliant_hydroelastic/>
+            </drake:proximity_properties>
+        </collision>
+    </link>
+    <link name="leg_1">
+        <visual name="table_leg_1_visual">
+            <origin xyz="-0.285 -0.585 0.35" rpy="0 0 0" />
+            <geometry>
+                <box size="0.03 0.03 0.7" />
+            </geometry>
+            <material name="table_leg_color" />
+        </visual>
+        <collision name="table_leg_1_collision">
+            <origin xyz="-0.285 -0.585 0.35" rpy="0 0 0" />
+            <geometry>
+                <box size="0.03 0.03 0.7" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="leg_2">
+        <visual name="table_leg_2_visual">
+            <origin xyz="-0.285 0.585 0.35" rpy="0 0 0" />
+            <geometry>
+                <box size="0.03 0.03 0.7" />
+            </geometry>
+            <material name="table_leg_color" />
+        </visual>
+        <collision name="table_leg_2_collision">
+            <origin xyz="-0.285 0.585 0.35" rpy="0 0 0" />
+            <geometry>
+                <box size="0.03 0.03 0.7" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="leg_3">
+        <visual name="table_leg_3_visual">
+            <origin xyz="0.285 -0.585 0.35" rpy="0 0 0" />
+            <geometry>
+                <box size="0.03 0.03 0.7" />
+            </geometry>
+            <material name="table_leg_color" />
+        </visual>
+        <collision name="table_leg_3_collision">
+            <origin xyz="0.285 -0.585 0.35" rpy="0 0 0" />
+            <geometry>
+                <box size="0.03 0.03 0.7" />
+            </geometry>
+        </collision>
+    </link>
+    <link name="leg_4">
+        <visual name="table_leg_4_visual">
+            <origin xyz="0.285 0.585 0.35" rpy="0 0 0" />
+            <geometry>
+                <box size="0.03 0.03 0.7" />
+            </geometry>
+            <material name="table_leg_color" />
+        </visual>
+        <collision name="table_leg_4_collision">
+            <origin xyz="0.285 0.585 0.35" rpy="0 0 0" />
+            <geometry>
+                <box size="0.03 0.03 0.7" />
+            </geometry>
+        </collision>
+    </link>
+</robot>
+

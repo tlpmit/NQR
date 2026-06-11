@@ -1,0 +1,9 @@
+<mujoco model="block">
+  <worldbody>
+    <!-- 8 cm cube sitting on top of the table (z = 0.75 + 0.04 = 0.79) -->
+    <body name="block" pos="0.65 0.0 0.79">
+      <geom type="box" size="0.04 0.04 0.04"
+            rgba="0.9 0.2 0.1 1" mass="0.2" condim="6" friction="1 0.005 0.0001"/>
+    </body>
+  </worldbody>
+</mujoco>

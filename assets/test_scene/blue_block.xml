@@ -1,0 +1,9 @@
+<mujoco model="blue_block">
+  <worldbody>
+    <!-- 6 cm cube on the table, offset from the red block -->
+    <body name="blue_block" pos="0.95 -0.2 0.78">
+      <geom type="box" size="0.03 0.03 0.03"
+            rgba="0.15 0.25 0.9 1" mass="0.15" condim="6" friction="1 0.005 0.0001"/>
+    </body>
+  </worldbody>
+</mujoco>

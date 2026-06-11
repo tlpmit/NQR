@@ -1,0 +1,27 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+	<world name="sugar_box_world">
+	  <model name="sugar_box#13_1">
+		  <static>false</static>
+			        <pose>-0.05 0.3 0.81 1.57 0 0.75</pose>
+			<link name="sugar_box">
+				<collision name="sugar_box_collision">
+					<geometry>
+					  <mesh>
+					    <uri>004_sugar_box/textured.obj</uri>
+					    <scale>1.0 1.0 1.0</scale>
+					  </mesh>
+					</geometry>
+				</collision>
+				<visual name="sugar_box_visual">
+					<geometry>
+					  <mesh>
+					    <uri>004_sugar_box/textured.obj</uri>
+					    <scale>1.0 1.0 1.0</scale>
+					  </mesh>
+					</geometry>
+				</visual>
+			</link>
+		</model>
+	</world>
+</sdf>

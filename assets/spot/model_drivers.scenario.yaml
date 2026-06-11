@@ -1,0 +1,20 @@
+model_drivers:
+    spot: !InverseDynamicsDriver
+      gains:
+        # Old gains.
+        # arm_sh0: {kp: 500, ki: 1, kd: 20}
+        # arm_sh1: {kp: 500, ki: 1, kd: 20}
+        # arm_el0: {kp: 500, ki: 1, kd: 20}
+        # arm_el1: {kp: 500, ki: 1, kd: 20}
+        # arm_wr0: {kp: 500, ki: 1, kd: 20}
+        # arm_wr1: {kp: 500, ki: 1, kd: 20}
+        # arm_f1x: {kp: 100, ki: 1, kd: 20}
+
+        # Increased gains to grasp objects more tightly.
+        arm_sh0: {kp: 1000, ki: 1, kd: 50}
+        arm_sh1: {kp: 1000, ki: 1, kd: 50}
+        arm_el0: {kp: 1000, ki: 1, kd: 50}
+        arm_el1: {kp: 1000, ki: 1, kd: 50}
+        arm_wr0: {kp: 1000, ki: 1, kd: 50}
+        arm_wr1: {kp: 1000, ki: 1, kd: 50}
+        arm_f1x: {kp:  250, ki: 1, kd: 50}

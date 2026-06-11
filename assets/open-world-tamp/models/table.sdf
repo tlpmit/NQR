@@ -1,0 +1,83 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+    <world name="tmp_world">
+        <model name="table#1_1">
+            <static>true</static>
+            <pose>0 0 0 0 0 0</pose>
+            <link name='base'> </link>
+            <joint name="fix_to_world_0" type="fixed">
+                <parent>base</parent>
+                <child>table_top</child>
+            </joint>
+            <joint name="fix_to_world_1" type="fixed">
+                <parent>base</parent>
+                <child>table_leg_1</child>
+            </joint>
+            <joint name="fix_to_world_2" type="fixed">
+                <parent>base</parent>
+                <child>table_leg_2</child>
+            </joint>
+            <joint name="fix_to_world_3" type="fixed">
+                <parent>base</parent>
+                <child>table_leg_3</child>
+            </joint>
+            <joint name="fix_to_world_4" type="fixed">
+                <parent>base</parent>
+                <child>table_leg_4</child>
+            </joint>
+            <link name="table_top">
+                <pose>0.0 0.0 0.715 0 0 0</pose>
+                <collision name="table_top_collision">
+                  <geometry> <box><size>0.6 1.2 0.03</size></box></geometry>
+                </collision>
+                <visual name="table_top_visual">
+                  <geometry> <box><size>0.6 1.2 0.03</size></box></geometry>
+                    <material>
+                        <ambient>0.6 0.4 0.2 1</ambient>
+                    </material>
+                </visual>             
+            </link>
+            <link name="table_leg_1">
+                <pose>-0.285 -0.585 0.35 0 0 0</pose>
+                <collision name="table_leg_1_collision">
+                  <geometry><box><size>0.03 0.03 0.7</size></box></geometry>
+                </collision>
+                <visual name="table_leg_1_visual">
+                  <geometry><box><size>0.03 0.03 0.7</size></box></geometry>
+                  <material><diffuse>0.1 0.1 0.75 1</diffuse></material>
+                </visual>             
+            </link>
+            <link name="table_leg_2">
+                <pose>-0.285 0.585 0.35 0 0 0</pose>
+                <collision name="table_leg_2_collision">
+                  <geometry><box><size>0.03 0.03 0.7</size></box></geometry>
+                </collision>
+                <visual name="table_leg_2_visual">
+                  <geometry><box><size>0.03 0.03 0.7</size></box></geometry>
+                  <material><diffuse>0.1 0.1 0.75 1</diffuse></material>
+                </visual>             
+            </link>
+            <link name="table_leg_3">
+                <pose>0.285 -0.585 0.35 0 0 0</pose>
+                <collision name="table_leg_3_collision">
+                  <geometry><box><size>0.03 0.03 0.7</size></box></geometry>
+                </collision>
+                <visual name="table_leg_3_visual">
+                  <geometry><box><size>0.03 0.03 0.7</size></box></geometry>
+                  <material><diffuse>0.1 0.1 0.75 1</diffuse></material>                  
+                </visual>             
+            </link>
+            <link name="table_leg_4">
+                <pose>0.285 0.585 0.35 0 0 0</pose>
+                <collision name="table_leg_4_collision">
+                  <geometry><box><size>0.03 0.03 0.7</size></box></geometry>
+                </collision>
+                <visual name="table_leg_4_visual">
+                  <geometry><box><size>0.03 0.03 0.7</size></box></geometry>
+                  <material><diffuse>0.1 0.1 0.5 1</diffuse></material>
+                </visual>             
+            </link>
+        </model>
+    </world>
+</sdf>
+

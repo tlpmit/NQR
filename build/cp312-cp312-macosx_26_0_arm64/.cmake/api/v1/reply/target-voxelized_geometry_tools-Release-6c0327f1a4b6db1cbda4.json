@@ -1,0 +1,399 @@
+{
+	"archive" : 
+	{
+		"lto" : true
+	},
+	"artifacts" : 
+	[
+		{
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/libvoxelized_geometry_tools.a"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_library",
+			"install",
+			"target_link_libraries",
+			"add_compile_options",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"src/qr_mapping/dependencies/voxelized_geometry_tools/CMakeLists.txt",
+			"src/qr_mapping/CMakeLists.txt"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 66,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 179,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 0,
+				"line" : 80,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 35,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 36,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 37,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 38,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 39,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 40,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 41,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 42,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 43,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 44,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 45,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 46,
+				"parent" : 0
+			},
+			{
+				"command" : 3,
+				"file" : 0,
+				"line" : 47,
+				"parent" : 0
+			},
+			{
+				"file" : 1
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 12,
+				"parent" : 17
+			},
+			{
+				"command" : 4,
+				"file" : 1,
+				"line" : 38,
+				"parent" : 17
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 110,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "-ftree-vectorize -fPIC -fstack-protector-strong -O2 -pipe -stdlib=libc++ -fvisibility-inlines-hidden -fmessage-length=0 -isystem /Users/tlp/Documents/GitHub/NQR/.pixi/envs/default/include -fopenmp=libomp -O3 -DNDEBUG -std=c++20 -flto=thin -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk -fPIC"
+				},
+				{
+					"backtrace" : 4,
+					"fragment" : "-std=c++17"
+				},
+				{
+					"backtrace" : 5,
+					"fragment" : "-Wall"
+				},
+				{
+					"backtrace" : 6,
+					"fragment" : "-Wextra"
+				},
+				{
+					"backtrace" : 7,
+					"fragment" : "-Werror"
+				},
+				{
+					"backtrace" : 8,
+					"fragment" : "-Wconversion"
+				},
+				{
+					"backtrace" : 9,
+					"fragment" : "-Wshadow"
+				},
+				{
+					"backtrace" : 10,
+					"fragment" : "-O3"
+				},
+				{
+					"backtrace" : 11,
+					"fragment" : "-g"
+				},
+				{
+					"backtrace" : 12,
+					"fragment" : "-Werror=non-virtual-dtor"
+				},
+				{
+					"backtrace" : 13,
+					"fragment" : "-Wold-style-cast"
+				},
+				{
+					"backtrace" : 14,
+					"fragment" : "-Wpessimizing-move"
+				},
+				{
+					"backtrace" : 15,
+					"fragment" : "-Wuninitialized"
+				},
+				{
+					"backtrace" : 16,
+					"fragment" : "-Wmissing-declarations"
+				}
+			],
+			"frameworks" : 
+			[
+				{
+					"backtrace" : 21,
+					"isSystem" : true,
+					"path" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks/OpenCL.framework"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"backtrace" : 18,
+					"path" : "/Users/tlp/Documents/GitHub/NQR/src/qr_mapping/include"
+				},
+				{
+					"backtrace" : 19,
+					"path" : "/Users/tlp/Documents/GitHub/NQR/src/qr_mapping/dependencies/common_robotics_utilities/include"
+				},
+				{
+					"backtrace" : 20,
+					"path" : "/Users/tlp/Documents/GitHub/NQR/src/qr_mapping/dependencies/voxelized_geometry_tools/include"
+				},
+				{
+					"backtrace" : 18,
+					"isSystem" : true,
+					"path" : "/Users/tlp/Documents/GitHub/NQR/.pixi/envs/default/include/eigen3"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					1
+				],
+				"standard" : "20"
+			},
+			"sourceIndexes" : 
+			[
+				7,
+				8,
+				9,
+				10,
+				11,
+				12
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"backtrace" : 3,
+			"id" : "common_robotics_utilities::@43c697c2165717984913"
+		}
+	],
+	"id" : "voxelized_geometry_tools::@cce8100bf8b320faf313",
+	"install" : 
+	{
+		"destinations" : 
+		[
+			{
+				"backtrace" : 2,
+				"path" : "lib"
+			}
+		],
+		"prefix" : 
+		{
+			"path" : "/var/folders/y2/fghxh2fs6tsd8v8837_d5b400000gn/T/tmp95vgnwlv/wheel/platlib"
+		}
+	},
+	"name" : "voxelized_geometry_tools",
+	"nameOnDisk" : "libvoxelized_geometry_tools.a",
+	"paths" : 
+	{
+		"build" : "src/qr_mapping/dependencies/voxelized_geometry_tools",
+		"source" : "src/qr_mapping/dependencies/voxelized_geometry_tools"
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				0,
+				1,
+				2,
+				3,
+				4,
+				5,
+				6
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				7,
+				8,
+				9,
+				10,
+				11,
+				12
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 1,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/include/voxelized_geometry_tools/collision_map.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/include/voxelized_geometry_tools/dynamic_spatial_hashed_collision_map.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/include/voxelized_geometry_tools/mesh_rasterizer.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/include/voxelized_geometry_tools/signed_distance_field.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/include/voxelized_geometry_tools/signed_distance_field_generation.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/include/voxelized_geometry_tools/tagged_object_collision_map.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/include/voxelized_geometry_tools/topology_computation.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/src/voxelized_geometry_tools/collision_map.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/src/voxelized_geometry_tools/mesh_rasterizer.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/src/voxelized_geometry_tools/dynamic_spatial_hashed_collision_map.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/src/voxelized_geometry_tools/signed_distance_field.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/src/voxelized_geometry_tools/signed_distance_field_generation.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/qr_mapping/dependencies/voxelized_geometry_tools/src/voxelized_geometry_tools/tagged_object_collision_map.cpp",
+			"sourceGroupIndex" : 1
+		}
+	],
+	"type" : "STATIC_LIBRARY"
+}

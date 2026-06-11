@@ -1,0 +1,56 @@
+#  # Solved via hand-eye calibration (horaud method)
+#   self.T_camera_mount_to_optical = np.array(
+#       [
+#           [
+#               0.027428775538073224,
+#               -0.00992367756041619,
+#               0.9995745009233474,
+#               0.019596984207924398,
+#           ],
+#           [
+#               -0.9996207954500944,
+#               -0.002707753720517836,
+#               0.02740316356755089,
+#               0.03576434244863157,
+#           ],
+#           [
+#               0.0024346614144300956,
+#               -0.999947092947155,
+#               -0.0099941848257461,
+#               0.07208029114789867,
+#           ],
+#           [0.0, 0.0, 0.0, 1.0],
+#       ]
+#   )
+
+# width = 1280
+# height = 720
+# intrinsic_matrix = np.array([
+#   [909.58258057,   0.        , 646.32043457],
+#   [  0.        , 909.35491943, 374.66378784],
+#   [  0.        ,   0.        ,   1.        ]
+# ])
+
+# Code snippet to convert extrinsics:
+# ```
+# import numpy as np
+# from pydrake.all import RollPitchYaw, RotationMatrix
+
+# R = RotationMatrix(extrinsics[:3, :3])
+# rpy = RollPitchYaw(R)  # in radians
+# print(np.degrees(rpy.vector()))
+# ```
+
+cameras:
+  head:
+    X_PB:
+      base_frame: rby1_camera_mount
+      rotation: !Rpy
+        deg: [-90.572636, -0.139496, -88.428245]
+      translation: [0.0195969842, 0.0357643424, 0.0720802911]
+    center_x: 646.32043457
+    center_y: 374.66378784
+    focal: {x: 909.58258057, y: 909.35491943}
+    width: 1280
+    height: 720
+    name: head

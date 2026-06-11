@@ -1,0 +1,29 @@
+<?xml version="1.0" ?>
+<sdf version="1.9">
+  <world name="small_cap_world">
+    <model name="small_cap">
+      <static>false</static>
+      <pose>0.42 0.0 0.03 0 3.14159 0</pose>
+      <link name="small_cap_link">
+	<collision name="small_cap_collision">
+	  <geometry>
+	    <mesh>
+	      <uri>small_cap.obj</uri>
+	      <scale>0.001 0.001 0.001</scale>
+	    </mesh>
+	  </geometry>
+	</collision>
+	<visual name="small_cap_visual">
+	  <geometry>
+	    <mesh>
+	      <uri>small_cap.obj</uri>
+	    <scale>0.001 0.001 0.001</scale>					    					  </mesh>
+	  </geometry>
+	  <material>
+	    <ambient>0 1.0 1.0 1.0</ambient>
+	  </material>
+	</visual>
+      </link>
+    </model>
+  </world>
+</sdf>
