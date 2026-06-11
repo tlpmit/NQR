@@ -1,2 +1,0 @@
-/var/folders/y2/fghxh2fs6tsd8v8837_d5b400000gn/T/tmp95vgnwlv/wheel/platlib/qr_mapping/cpp.cpython-312-darwin.so
-/var/folders/y2/fghxh2fs6tsd8v8837_d5b400000gn/T/tmp95vgnwlv/wheel/platlib/qr_mapping/cpp.pyi

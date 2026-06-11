@@ -1,8 +1,0 @@
-{
-  "source_dir": "/Users/tlp/Documents/GitHub/NQR",
-  "build_dir": "/Users/tlp/Documents/GitHub/NQR/build/cp312-cp312-macosx_26_0_arm64",
-  "cmake_path": "/Users/tlp/Documents/GitHub/NQR/.pixi/envs/default/bin/cmake",
-  "skbuild_path": "/Users/tlp/.cache/pixi-cache/uv-cache/builds-v0/.tmpPU6vS9/lib/python3.12/site-packages/scikit_build_core",
-  "skbuild_version": "0.12.2",
-  "python_executable": "/Users/tlp/.cache/pixi-cache/uv-cache/builds-v0/.tmpPU6vS9/bin/python"
-}
