@@ -166,6 +166,7 @@ environments:
       - pypi: ../QAA
       - pypi: git+https://github.com/Learning-and-Intelligent-Systems/lisdf?rev=qr#6a0ea05f7d90afb42fab5d558bfea566146271de
       - pypi: git+https://github.com/erwincoumans/urdfpy?rev=fishbotics-merge#4347d6a69b91962ee805d2d6318d3c3a68192654
+      - pypi: git+https://github.com/horizon-blue/vamp.git#2914aaee1e97d6ca76eb276d7d99d3993cf4292f
       - pypi: https://files.pythonhosted.org/packages/04/96/92447566d16df59b2a776c0fb82dbc4d9e07cd95062562af01e408583fc4/itsdangerous-2.2.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/05/7f/798705f5296a58ca505d600456748d1be48078eac8a7050d8a98bc9edb89/decorator-5.3.1-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/05/98/716a473cfb24750858ddd5d14e6527539dd206583a46408d08eeb2844a75/trimesh-4.12.2-py3-none-any.whl
@@ -438,6 +439,7 @@ environments:
       - pypi: ../QAA
       - pypi: git+https://github.com/Learning-and-Intelligent-Systems/lisdf?rev=qr#6a0ea05f7d90afb42fab5d558bfea566146271de
       - pypi: git+https://github.com/erwincoumans/urdfpy?rev=fishbotics-merge#4347d6a69b91962ee805d2d6318d3c3a68192654
+      - pypi: git+https://github.com/horizon-blue/vamp.git#2914aaee1e97d6ca76eb276d7d99d3993cf4292f
       - pypi: https://files.pythonhosted.org/packages/02/dc/c7043cab6fed8ae159fc1923ce829ada35c4dbd797d408a43858ffaf9639/tornado-6.5.7-cp39-abi3-macosx_10_9_universal2.whl
       - pypi: https://files.pythonhosted.org/packages/04/96/92447566d16df59b2a776c0fb82dbc4d9e07cd95062562af01e408583fc4/itsdangerous-2.2.0-py3-none-any.whl
       - pypi: https://files.pythonhosted.org/packages/05/7f/798705f5296a58ca505d600456748d1be48078eac8a7050d8a98bc9edb89/decorator-5.3.1-py3-none-any.whl
@@ -4264,6 +4266,7 @@ packages:
   - scikit-learn>=1.3
   - ncollpyde
   - scikit-image
+  - vamp-planner @ git+https://github.com/horizon-blue/vamp.git
   - pytest>=8.0 ; extra == 'dev'
   - ipdb ; extra == 'dev'
   requires_python: '>=3.11'
@@ -4342,6 +4345,20 @@ packages:
   - sphinx ; extra == 'docs'
   - sphinx-rtd-theme ; extra == 'docs'
   - sphinx-automodapi ; extra == 'docs'
+- pypi: git+https://github.com/horizon-blue/vamp.git#2914aaee1e97d6ca76eb276d7d99d3993cf4292f
+  name: vamp-planner
+  version: 0.6.1
+  requires_dist:
+  - numpy
+  - fire ; extra == 'examples'
+  - pybullet ; extra == 'examples'
+  - pyyaml ; extra == 'examples'
+  - tqdm ; extra == 'examples'
+  - pandas ; extra == 'examples'
+  - tabulate ; extra == 'examples'
+  - xmltodict ; extra == 'examples'
+  - pillow ; extra == 'heightmaps'
+  requires_python: '>=3.8'
 - pypi: https://files.pythonhosted.org/packages/02/dc/c7043cab6fed8ae159fc1923ce829ada35c4dbd797d408a43858ffaf9639/tornado-6.5.7-cp39-abi3-macosx_10_9_universal2.whl
   name: tornado
   version: 6.5.7

@@ -47,6 +47,9 @@ class QRSystemConfig:
     policy_module: str = 'hpn_btamp'
     """The policy module to use. Options are 'crow_tamp', 'hpn_btamp', 'hpn_tamp'"""
 
+    virtual_robot_mode: str = 'headless'
+    """Simulator display mode for the virtual robot: 'headless' or 'display'."""
+
     hpn_params: HPNConfig = field(default_factory=HPNConfig)
     """Parameters for the HPN policy module."""
 

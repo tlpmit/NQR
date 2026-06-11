@@ -192,6 +192,7 @@ def run_QR_main(problem: QRProblem, qr_configuration: QRSystemConfig):
         problem.robot,
         problem=problem,
         run_from_pkl_path=qr_configuration.run_from_pkl_path,
+        mode=qr_configuration.virtual_robot_mode,
     )
     qr_main = QRMainVR(virtual_robot, qr_configuration)
 
