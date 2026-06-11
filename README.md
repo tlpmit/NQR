@@ -4,10 +4,32 @@ New implementation of the QR robot planning/simulation/control stack.
 
 ## Setup
 
+NQR depends on **sibling checkouts** of HPN and QAA (editable pixi path
+dependencies, used by the planning/policy stack). Clone all three side by
+side first — `pixi install` fails with
+`error while canonicalization ../HPN` otherwise:
+
+```text
+GitHub/
+├── NQR/    (this repo)
+├── HPN/
+└── QAA/
+```
+
+Then:
+
 ```bash
-pixi install
+pixi install   # solves the env and builds the qr_mapping C++ module
 pixi run test
 ```
+
+Notes:
+- Supported platforms: macOS arm64 and Linux x86-64 (Ubuntu jammy/noble).
+- The first install downloads the Drake C++ SDK (~600 MB, cached under
+  `.pixi/fetchcontent`) and compiles `qr_mapping`; expect several minutes.
+- `src/qr_belief/`, `src/qr_perception/`, `src/qr_policy/`, `src/qr_main/`,
+  `src/qr_run/` host the belief/perception/policy stack; planning itself
+  (RetroPlan, TAMP domains, Roboverse) is imported from the HPN checkout.
 
 ## What's here
 

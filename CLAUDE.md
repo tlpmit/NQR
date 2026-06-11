@@ -23,7 +23,7 @@ Implemented so far (all tested, `pixi run test` runs the suite in ~10 s):
 - Not yet started: `qr_planning` (OMPL2 motion planning).
 
 ## Commands
-- `pixi install` — set up the whole environment (conda-forge: python, pinocchio; pypi: drake, mujoco, manipulation, meshcat, …).
+- `pixi install` — set up the whole environment (conda-forge: python, pinocchio; pypi: drake, mujoco, manipulation, meshcat, …). REQUIRES sibling checkouts `../HPN` and `../QAA` (editable path deps); without them it fails with "error while canonicalization ../HPN".
 - `pixi run test` — run the pytest suite (`tests/`). A single test: `pixi run pytest tests/test_kinsim.py::test_grasp_attach_detach -q`.
 - `QR_TEST_MODE=display` runs the test sims with their viewers (Meshcat for Drake/kinsim — run with `-s` to see the URL; a MuJoCo window otherwise). In-process MuJoCo tests on macOS must then be run via `mjpython -m pytest`; the ZMQ virtual-robot tests handle this automatically.
 - `QR_TEST_MODE=interactive` is display mode plus prompts: it waits for Enter once the viewer is up before executing, and again before closing. Requires `-s`, e.g. `QR_TEST_MODE=interactive pixi run mjpython -m pytest tests/test_mujoco_rby1.py -s`.
