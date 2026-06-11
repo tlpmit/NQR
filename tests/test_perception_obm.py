@@ -194,6 +194,106 @@ def test_obm_teleported_object(sim):
         assert stale.existence_confidence < conf_before
 
 
+# Base poses (x, y, theta) the robot teleports to between observations. The
+# first is the fixture's original pose; the others step around the scene so
+# the head sees the blocks from genuinely different angles.
+VIEWPOINTS = [
+    (0.0, 0.0, 0.0),
+    (-0.10, 0.20, -0.20),
+    (-0.10, -0.20, 0.20),
+]
+
+
+def _set_base(sim, x, y, theta):
+    conf = sim.get_robot_conf()
+    conf[:3] = [x, y, theta]
+    sim.set_robot_conf(conf)
+    sim.step(20)
+
+
+def _observe_from(sim, viewpoints, head_target):
+    """Teleport through each base pose, point the head at head_target, and
+    return the per-viewpoint snapshot of OBM hypothesis confidences."""
+    obm = make_obm()
+    history = []
+    for x, y, theta in viewpoints:
+        _set_base(sim, x, y, theta)
+        sim.point_head_at(head_target)
+        obm.observation_update(observe(sim))
+        history.append(
+            {k: h.existence_confidence for k, h in obm.memory.objects.items()}
+        )
+    return obm, history
+
+
+def test_obm_reobservation_from_multiple_viewpoints(sim):
+    """Same scene viewed from several base poses: OBM keeps a single
+    hypothesis per object and matched thing confidences don't decrease."""
+    reset_scene(sim)
+    obm, history = _observe_from(sim, VIEWPOINTS, [0.8, -0.1, 0.79])
+
+    things, surfaces = things_and_surfaces(obm.memory)
+    assert len(surfaces) == 1 and len(things) == 2
+
+    keys0 = set(history[0])
+    for confs in history[1:]:
+        assert set(confs) == keys0
+    for k in things:
+        for prev, curr in zip(history, history[1:]):
+            assert curr[k] >= prev[k]
+
+
+# Extra red blocks for the 4-object scene. Both reuse block.xml — the sim
+# attaches them under distinct body prefixes so the duplicates are safe.
+RED_POS_3 = np.array([0.85, 0.20, 0.79])
+RED_POS_4 = np.array([1.15, 0.10, 0.79])
+MULTI_HEAD_TARGET = [0.90, 0.0, 0.79]
+
+
+@pytest.fixture(scope="module")
+def sim_multi(test_scene_dir):
+    from qr_robots.mujoco.rby1.sim import make_sim
+
+    sim = make_sim(
+        test_scene_dir,
+        {
+            "table": {"file": "table.xml", "fixed": True},
+            "block": {"file": "block.xml"},
+            "blue_block": {"file": "blue_block.xml"},
+            "block_3": {"file": "block.xml"},
+            "block_4": {"file": "block.xml"},
+        },
+        mode=SIM_MODE,
+    )
+    sim.point_head_at(MULTI_HEAD_TARGET)
+    yield from sim_fixture(sim, "perception obm (multi-object)")
+
+
+def reset_multi_scene(sim):
+    sim.set_object_pose("block", RED_POS, [1, 0, 0, 0])
+    sim.set_object_pose("blue_block", BLUE_POS, [1, 0, 0, 0])
+    sim.set_object_pose("block_3", RED_POS_3, [1, 0, 0, 0])
+    sim.set_object_pose("block_4", RED_POS_4, [1, 0, 0, 0])
+    sim.step(100)
+
+
+def test_obm_reobservation_from_multiple_viewpoints_multi_object(sim_multi):
+    """4-block scene observed from several base poses: still one hypothesis
+    per object across viewpoints, no duplicates spawned."""
+    reset_multi_scene(sim_multi)
+    obm, history = _observe_from(sim_multi, VIEWPOINTS, MULTI_HEAD_TARGET)
+
+    things, surfaces = things_and_surfaces(obm.memory)
+    assert len(surfaces) == 1 and len(things) == 4
+
+    keys0 = set(history[0])
+    for confs in history[1:]:
+        assert set(confs) == keys0
+    for k in things:
+        for prev, curr in zip(history, history[1:]):
+            assert curr[k] >= prev[k]
+
+
 @pytest.fixture(scope="module")
 def drake_sim(test_scene_dir):
     from qr_robots.drake.rby1.sim import make_sim
@@ -235,7 +335,7 @@ def test_perception_on_drake_images(drake_sim):
     assert np.abs(mesh.extents[:2] - 0.08).max() < EXTENT_TOL
 
 
-def test_obm_on_kinsim_images(test_scene_dir):
+def test_obm_on_kinsim_images(mode="headless"):
     """Kinematic sim images (rendered via the MuJoCo bridge) feed the same
     pipeline; the OBM matches the kinematic world state."""
     from qr_kinsim.sim import KinematicSim
@@ -255,6 +355,7 @@ def test_obm_on_kinsim_images(test_scene_dir):
                 "color": [0.9, 0.2, 0.1, 1.0],
             },
         },
+        mode=mode,
     )
     sim.execute_chain_trajectory("head", [[0.0, 0.7]])
 

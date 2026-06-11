@@ -25,6 +25,7 @@ Object dict format
 from __future__ import annotations
 
 import os
+import sys
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
@@ -32,6 +33,23 @@ from typing import Union
 
 import mujoco
 import numpy as np
+
+
+# Route libmujoco's warnings through Python instead of letting libmujoco
+# write straight to stderr. We drop one macOS-only message that fires at GL
+# context teardown ("ARB_clip_control unavailable while mjDEPTH_ZEROFAR
+# requested") and forward anything else. Empirically, simply having a
+# user-warning callback installed is also what silences that specific
+# message — it never reaches this callback, but the default fprintf sink is
+# bypassed.
+def _mujoco_warning_handler(msg: object) -> None:
+    text = msg.decode("utf-8", "replace") if isinstance(msg, (bytes, bytearray)) else str(msg)
+    if "ARB_clip_control unavailable" in text:
+        return
+    sys.stderr.write(f"MuJoCo WARNING: {text}\n")
+
+
+mujoco.set_mju_user_warning(_mujoco_warning_handler)
 
 # Contact params for graspable scene objects.  Twice as stiff as the MuJoCo
 # defaults (solref="0.02 1", solimp="0.9 0.95 0.001") while staying well above
