@@ -1,0 +1,45 @@
+<?xml version="1.0" ?>
+<robot name="shelf_box.urdf">
+  <joint name="j1" type="fixed">
+    <parent link="side1" />
+    <child link="side2" />
+  </joint>    
+
+  <link name="side1">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+      <geometry>
+        <box size="0.3 0.002 0.5"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 -0.2 0"/>
+      <geometry>
+        <box size="0.3 0.002 0.5"/>
+      </geometry>
+    </collision>
+    </link>
+
+  <link name="side2">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0.2 0"/>
+      <geometry>
+        <box size="0.3 0.002 0.5"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0.2 0"/>
+      <geometry>
+        <box size="0.3 0.002 0.5"/>
+      </geometry>
+    </collision>
+    </link>    
+  
+</robot>
+

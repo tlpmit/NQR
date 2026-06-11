@@ -1,0 +1,22 @@
+(define
+  (domain tabletop)
+
+  (:object-types
+    (panda-type     "package://concepts/robots/franka_description/robots/panda_arm_hand.urdf")
+    (workspace-type "package://concepts/basic/plane/workspace.urdf")
+    (table-type     "package://local/plane.urdf")
+    (cube-type      "package://local/box.urdf")
+    (box-type       "package://local/container.urdf")
+    (shelf-type     "package://local/shelf.urdf")
+    (shelf-box-type     "package://local/shelf_box.urdf")
+  )
+
+  (:predicates
+    (in ?obj ?region)
+    (on ?obj ?obj)
+    (holding ?obj)
+    (robot ?robot)
+    (workspace ?w)
+    (graspable ?obj)
+  )
+)

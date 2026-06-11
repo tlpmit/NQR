@@ -1,0 +1,2 @@
+class QRQueryService(object):
+    pass

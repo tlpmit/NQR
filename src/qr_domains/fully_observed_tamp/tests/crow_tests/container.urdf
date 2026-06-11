@@ -1,0 +1,110 @@
+<?xml version="1.0" ?>
+<robot name="container.urdf">
+  <joint name="j1" type="fixed">
+    <parent link="base_link" />
+    <child link="side1" />
+  </joint>
+  <joint name="j2" type="fixed">
+    <parent link="base_link" />
+    <child link="side2" />
+  </joint>
+  <joint name="j3" type="fixed">
+    <parent link="base_link" />
+    <child link="side3" />
+  </joint>
+  <joint name="j4" type="fixed">
+    <parent link="base_link" />
+    <child link="side4" />
+  </joint>
+
+  <link name="base_link">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.2 0.2 .002"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 -0.05"/>
+      <geometry>
+        <box size="0.2 0.2 .002"/>
+      </geometry>
+    </collision>
+    </link>
+
+  <link name="side1">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 -0.1 0"/>
+      <geometry>
+        <box size="0.2 .002 0.1"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 -0.1 0"/>
+      <geometry>
+        <box size="0.2 .002 0.1"/>
+      </geometry>
+    </collision>
+    </link>
+
+  <link name="side2">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0.1 0"/>
+      <geometry>
+        <box size="0.2 .002 0.1"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0.1 0"/>
+      <geometry>
+        <box size="0.2 .002 0.1"/>
+      </geometry>
+    </collision>
+    </link>
+
+  <link name="side3">
+    <visual>
+      <origin rpy="0 0 0" xyz="-0.1 0 0"/>
+      <geometry>
+        <box size=".002 0.2 0.1"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="-0.1 0 0"/>
+      <geometry>
+        <box size=".002 0.2 0.1"/>
+      </geometry>
+    </collision>
+    </link>
+
+  <link name="side4">
+    <visual>
+      <origin rpy="0 0 0" xyz="0.1 0 0"/>
+      <geometry>
+        <box size=".002 0.2 0.1"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0.1 0 0"/>
+      <geometry>
+        <box size=".002 0.2 0.1"/>
+      </geometry>
+    </collision>
+  </link>
+</robot>
+

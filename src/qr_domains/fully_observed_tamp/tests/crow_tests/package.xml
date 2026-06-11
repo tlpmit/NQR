@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>local</name>
+    <version>1.0.0</version>
+    <description>Assets for the local tests</description>
+</package>

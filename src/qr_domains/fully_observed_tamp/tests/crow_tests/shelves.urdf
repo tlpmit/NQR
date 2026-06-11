@@ -1,0 +1,90 @@
+<?xml version="1.0" ?>
+<robot name="shelves.urdf">
+  <joint name="j1" type="fixed">
+    <parent link="back" />
+    <child link="shelf1" />
+  </joint>
+  <joint name="j2" type="fixed">
+    <parent link="back" />
+    <child link="shelf2" />
+  </joint>
+  <joint name="j3" type="fixed">
+    <parent link="back" />
+    <child link="shelf3" />
+  </joint>
+  
+  <link name="back">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.2"/>
+      <geometry>
+        <box size="0.3 0.002 0.3"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.2"/>
+      <geometry>
+        <box size="0.3 0.002 0.4"/>
+      </geometry>
+    </collision>
+    </link>
+
+  <link name="shelf1">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.001"/>
+      <geometry>
+        <box size="0.3 0.2 0.002"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.001"/>
+      <geometry>
+        <box size="0.3 0.2 0.002"/>
+      </geometry>
+    </collision>
+    </link>
+
+  <link name="shelf2">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.101"/>
+      <geometry>
+        <box size="0.3 0.2 0.002"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.101"/>
+      <geometry>
+        <box size="0.3 0.2 0.002"/>
+      </geometry>
+    </collision>
+    </link>
+
+      <link name="shelf2">
+    <visual>
+      <origin rpy="0 0 0" xyz="0 0 0.201"/>
+      <geometry>
+        <box size="0.3 0.2 0.002"/>
+      </geometry>
+      <material name="brown">
+        <color rgba="0.61176471 0.45882353 0.37254902 1"/>
+      </material>
+    </visual>
+    <collision>
+      <origin rpy="0 0 0" xyz="0 0 0.201"/>
+      <geometry>
+        <box size="0.3 0.2 0.002"/>
+      </geometry>
+    </collision>
+    </link>
+
+
+</robot>
+

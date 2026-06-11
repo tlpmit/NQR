@@ -1,0 +1,288 @@
+cmake_minimum_required(VERSION 3.5)
+project(voxelized_geometry_tools)
+
+find_package(ament_cmake_ros REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(visualization_msgs REQUIRED)
+
+find_package(common_robotics_utilities REQUIRED)
+
+find_package(Eigen3 REQUIRED)
+set(Eigen3_INCLUDE_DIRS ${EIGEN3_INCLUDE_DIR})
+find_package(OpenMP)
+find_package(CUDA)
+find_package(OpenCL)
+
+## We don't depend on Drake, but we do use different build flags if present.
+find_package(drake QUIET)
+
+#######################################
+## Declare ROS messages and services ##
+#######################################
+
+## Generate messages in the 'msg' folder
+
+rosidl_generate_interfaces(
+  ${PROJECT_NAME}_interfaces
+  msg/CollisionMapMessage.msg
+  msg/DynamicSpatialHashedCollisionMapMessage.msg
+  msg/SignedDistanceFieldMessage.msg
+  msg/TaggedObjectCollisionMapMessage.msg
+  DEPENDENCIES std_msgs
+)
+
+###########
+## Build ##
+###########
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+include_directories(include SYSTEM ${Eigen3_INCLUDE_DIRS})
+
+## Build options
+set(CMAKE_INTERPROCEDURAL_OPTIMIZATION ON)
+cmake_policy(SET CMP0069 NEW)
+
+add_compile_options(-std=c++17)
+add_compile_options(-Wall)
+add_compile_options(-Wextra)
+add_compile_options(-Werror)
+add_compile_options(-Wconversion)
+add_compile_options(-Wshadow)
+add_compile_options(-O3)
+add_compile_options(-g)
+add_compile_options(-Werror=non-virtual-dtor)
+add_compile_options(-Wold-style-cast)
+add_compile_options(-Wpessimizing-move)
+add_compile_options(-Wuninitialized)
+add_compile_options(-Wmissing-declarations)
+
+if(drake_FOUND)
+    message(STATUS "Drake found, disabling -march=native")
+else()
+    message(STATUS "Drake NOT found, enabling -march=native")
+    add_compile_options(-march=native)
+endif()
+
+add_definitions(-DVOXELIZED_GEOMETRY_TOOLS__SUPPORTED_ROS_VERSION=2)
+
+## It's not clear if add_compile_options does the right things for flags that
+## may differ between languages and target type.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_EXE_LINKER_FLAGS
+    "${CMAKE_EXE_LINKER_FLAGS} ${OpenMP_EXE_LINKER_FLAGS}")
+set(CMAKE_SHARED_LINKER_FLAGS
+    "${CMAKE_SHARED_LINKER_FLAGS} ${OpenMP_SHARED_LINKER_FLAGS}")
+
+# Voxelized geometry tools library
+add_library(${PROJECT_NAME}
+            include/${PROJECT_NAME}/collision_map.hpp
+            include/${PROJECT_NAME}/dynamic_spatial_hashed_collision_map.hpp
+            include/${PROJECT_NAME}/mesh_rasterizer.hpp
+            include/${PROJECT_NAME}/signed_distance_field.hpp
+            include/${PROJECT_NAME}/signed_distance_field_generation.hpp
+            include/${PROJECT_NAME}/tagged_object_collision_map.hpp
+            include/${PROJECT_NAME}/topology_computation.hpp
+            src/${PROJECT_NAME}/collision_map.cpp
+            src/${PROJECT_NAME}/mesh_rasterizer.cpp
+            src/${PROJECT_NAME}/dynamic_spatial_hashed_collision_map.cpp
+            src/${PROJECT_NAME}/signed_distance_field.cpp
+            src/${PROJECT_NAME}/signed_distance_field_generation.cpp
+            src/${PROJECT_NAME}/tagged_object_collision_map.cpp)
+ament_target_dependencies(${PROJECT_NAME} common_robotics_utilities)
+
+# Cuda voxelization helpers library
+if(CUDA_FOUND)
+    message(STATUS "CUDA found. Building CUDA voxelization helpers")
+    include_directories(SYSTEM ${CUDA_INCLUDE_DIRS})
+    set(CUDA_NVCC_FLAGS "${CUDA_NVCC_FLAGS} -std=c++11 -O3 -use_fast_math")
+    set(CUDA_NVCC_FLAGS
+        "${CUDA_NVCC_FLAGS} -Xcompiler -D__CORRECT_ISO_CPP11_MATH_H_PROTO")
+    cuda_add_library(${PROJECT_NAME}_cuda_voxelization_helpers
+                     include/${PROJECT_NAME}/device_voxelization_interface.hpp
+                     include/${PROJECT_NAME}/cuda_voxelization_helpers.h
+                     src/${PROJECT_NAME}/cuda_voxelization_helpers.cu)
+    target_link_libraries(${PROJECT_NAME}_cuda_voxelization_helpers
+                          cuda ${CUDA_LIBRARIES})
+    add_library(${PROJECT_NAME}_dummy_cuda_voxelization_helpers
+                include/${PROJECT_NAME}/device_voxelization_interface.hpp
+                include/${PROJECT_NAME}/cuda_voxelization_helpers.h
+                src/${PROJECT_NAME}/dummy_cuda_voxelization_helpers.cc)
+else()
+    message(WARNING "CUDA not found. Building stubs for CUDA helpers.")
+    add_library(${PROJECT_NAME}_cuda_voxelization_helpers
+                include/${PROJECT_NAME}/device_voxelization_interface.hpp
+                include/${PROJECT_NAME}/cuda_voxelization_helpers.h
+                src/${PROJECT_NAME}/dummy_cuda_voxelization_helpers.cc)
+endif()
+
+# OpenCL voxelization helpers library
+if(OpenCL_FOUND)
+    message(STATUS "OpenCL found. Building OpenCL voxelization helpers")
+    include_directories(SYSTEM ${OpenCL_INCLUDE_DIRS})
+    add_library(${PROJECT_NAME}_opencl_voxelization_helpers
+                include/${PROJECT_NAME}/device_voxelization_interface.hpp
+                include/${PROJECT_NAME}/opencl_voxelization_helpers.h
+                src/${PROJECT_NAME}/opencl_voxelization_helpers.cc)
+    target_link_libraries(${PROJECT_NAME}_opencl_voxelization_helpers
+                          ${OpenCL_LIBRARIES})
+    add_library(${PROJECT_NAME}_dummy_opencl_voxelization_helpers
+                include/${PROJECT_NAME}/device_voxelization_interface.hpp
+                include/${PROJECT_NAME}/opencl_voxelization_helpers.h
+                src/${PROJECT_NAME}/dummy_opencl_voxelization_helpers.cc)
+else()
+    message(WARNING "OpenCL not found. Building stubs for OpenCL helpers.")
+    add_library(${PROJECT_NAME}_opencl_voxelization_helpers
+                include/${PROJECT_NAME}/device_voxelization_interface.hpp
+                include/${PROJECT_NAME}/opencl_voxelization_helpers.h
+                src/${PROJECT_NAME}/dummy_opencl_voxelization_helpers.cc)
+endif()
+
+# Pointcloud voxelization
+add_library(${PROJECT_NAME}_pointcloud_voxelization
+            include/${PROJECT_NAME}/cpu_pointcloud_voxelization.hpp
+            include/${PROJECT_NAME}/device_pointcloud_voxelization.hpp
+            include/${PROJECT_NAME}/device_voxelization_interface.hpp
+            include/${PROJECT_NAME}/pointcloud_voxelization_interface.hpp
+            include/${PROJECT_NAME}/pointcloud_voxelization.hpp
+            src/${PROJECT_NAME}/cpu_pointcloud_voxelization.cpp
+            src/${PROJECT_NAME}/device_pointcloud_voxelization.cpp
+            src/${PROJECT_NAME}/pointcloud_voxelization.cpp)
+target_link_libraries(${PROJECT_NAME}_pointcloud_voxelization
+                      ${PROJECT_NAME}_cuda_voxelization_helpers
+                      ${PROJECT_NAME}_opencl_voxelization_helpers
+                      ${PROJECT_NAME})
+
+# ROS interface libraries
+add_library(${PROJECT_NAME}_ros_interface
+            include/${PROJECT_NAME}/ros_interface.hpp
+            src/${PROJECT_NAME}/ros_interface.cpp)
+ament_target_dependencies(${PROJECT_NAME}_ros_interface
+                          common_robotics_utilities)
+ament_target_dependencies(${PROJECT_NAME}_ros_interface SYSTEM
+                          rclcpp
+                          std_msgs
+                          visualization_msgs)
+add_dependencies(${PROJECT_NAME}_ros_interface
+                 ${PROJECT_NAME}_interfaces)
+target_include_directories(
+    ${PROJECT_NAME}_ros_interface
+    PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_c>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp>"
+)
+target_link_libraries(${PROJECT_NAME}_ros_interface ${PROJECT_NAME})
+
+add_library(${PROJECT_NAME}_pointcloud_voxelization_ros_interface
+            include/${PROJECT_NAME}/pointcloud_voxelization_ros_interface.hpp
+            src/${PROJECT_NAME}/pointcloud_voxelization_ros_interface.cpp)
+ament_target_dependencies(${PROJECT_NAME}_pointcloud_voxelization_ros_interface
+                          SYSTEM sensor_msgs)
+target_link_libraries(${PROJECT_NAME}_pointcloud_voxelization_ros_interface
+                      ${PROJECT_NAME}_pointcloud_voxelization)
+
+# Examples
+add_executable(voxelized_geometry_tools_tutorial example/tutorial.cpp)
+ament_target_dependencies(voxelized_geometry_tools_tutorial
+    common_robotics_utilities)
+ament_target_dependencies(voxelized_geometry_tools_tutorial
+    SYSTEM rclcpp visualization_msgs)
+target_link_libraries(voxelized_geometry_tools_tutorial
+    ${PROJECT_NAME}_ros_interface ${PROJECT_NAME})
+
+add_executable(estimate_distance_example example/estimate_distance.cpp)
+ament_target_dependencies(estimate_distance_example
+    common_robotics_utilities)
+ament_target_dependencies(estimate_distance_example
+    SYSTEM rclcpp geometry_msgs std_msgs visualization_msgs)
+target_link_libraries(estimate_distance_example
+    ${PROJECT_NAME}_ros_interface ${PROJECT_NAME})
+
+add_executable(spatial_segments example/spatial_segments.cpp)
+ament_target_dependencies(spatial_segments common_robotics_utilities)
+ament_target_dependencies(spatial_segments SYSTEM rclcpp visualization_msgs)
+target_link_libraries(spatial_segments
+    ${PROJECT_NAME}_ros_interface ${PROJECT_NAME})
+
+add_executable(pointcloud_voxelization example/pointcloud_voxelization.cpp)
+ament_target_dependencies(pointcloud_voxelization
+    common_robotics_utilities)
+ament_target_dependencies(pointcloud_voxelization
+    SYSTEM rclcpp std_msgs visualization_msgs)
+target_link_libraries(pointcloud_voxelization
+    ${PROJECT_NAME}_ros_interface ${PROJECT_NAME}_pointcloud_voxelization
+    ${PROJECT_NAME})
+
+if(BUILD_TESTING)
+    # Tests
+    find_package(ament_cmake_gtest REQUIRED)
+
+    ament_add_gtest(pointcloud_voxelization_test
+        test/pointcloud_voxelization_test.cpp)
+    target_link_libraries(pointcloud_voxelization_test
+        ${PROJECT_NAME}_pointcloud_voxelization)
+
+    ament_add_gtest(mesh_rasterization_test test/mesh_rasterization_test.cpp)
+    target_link_libraries(mesh_rasterization_test ${PROJECT_NAME})
+
+    ament_add_gtest(sdf_generation_test test/sdf_generation_test.cpp)
+    target_link_libraries(sdf_generation_test ${PROJECT_NAME})
+endif()
+
+#############
+## Install ##
+#############
+
+## Mark library for installation
+install(TARGETS
+  ${PROJECT_NAME}
+  ${PROJECT_NAME}_cuda_voxelization_helpers
+  ${PROJECT_NAME}_opencl_voxelization_helpers
+  ${PROJECT_NAME}_pointcloud_voxelization
+  ${PROJECT_NAME}_pointcloud_voxelization_ros_interface
+  ${PROJECT_NAME}_ros_interface
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+# Mark examples for installation
+install(TARGETS
+  voxelized_geometry_tools_tutorial
+  estimate_distance_example
+  spatial_segments
+  pointcloud_voxelization
+  RUNTIME DESTINATION lib/${PROJECT_NAME}
+)
+
+## Mark cpp header files for installation
+install(
+  DIRECTORY include/
+  DESTINATION include
+  FILES_MATCHING PATTERN "*.hpp"
+  PATTERN ".svn" EXCLUDE
+)
+
+ament_export_definitions(-DVOXELIZED_GEOMETRY_TOOLS__SUPPORTED_ROS_VERSION=2)
+ament_export_include_directories(include)
+ament_export_libraries(
+  ${PROJECT_NAME}
+  ${PROJECT_NAME}_pointcloud_voxelization
+  ${PROJECT_NAME}_pointcloud_voxelization_ros_interface
+  ${PROJECT_NAME}_ros_interface
+)
+ament_export_dependencies(
+  rclcpp
+  sensor_msgs
+  std_msgs
+  geometry_msgs
+  visualization_msgs
+  common_robotics_utilities
+)
+
+ament_package(CONFIG_EXTRAS cmake/voxelized_geometry_tools-dependencies.cmake)

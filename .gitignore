@@ -1,1 +1,9 @@
 build/
+.pixi/
+__pycache__/
+*.pyc
+*.egg-info/
+.DS_Store
+MUJOCO_LOG.TXT
+# generated at first Spot MuJoCo load (see qr_robots/mujoco/spot/sim.py)
+assets/spot_description_drake/mujoco_mesh_cache/
