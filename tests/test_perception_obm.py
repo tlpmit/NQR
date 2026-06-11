@@ -14,19 +14,23 @@ from tests.conftest import SIM_MODE, sim_fixture
 RED_POS = np.array([0.65, 0.0, 0.79])
 BLUE_POS = np.array([0.95, -0.2, 0.78])
 TABLE_TOP_Z = 0.75
-CENTER_TOL = 0.02     # m
-EXTENT_TOL = 0.015    # m
+CENTER_TOL = 0.02  # m
+EXTENT_TOL = 0.015  # m
 
 
 @pytest.fixture(scope="module")
 def sim(test_scene_dir):
     from qr_robots.mujoco.rby1.sim import make_sim
 
-    sim = make_sim(test_scene_dir, {
-        "table": {"file": "table.xml", "fixed": True},
-        "block": {"file": "block.xml"},
-        "blue_block": {"file": "blue_block.xml"},
-    }, mode=SIM_MODE)
+    sim = make_sim(
+        test_scene_dir,
+        {
+            "table": {"file": "table.xml", "fixed": True},
+            "block": {"file": "block.xml"},
+            "blue_block": {"file": "blue_block.xml"},
+        },
+        mode=SIM_MODE,
+    )
     sim.point_head_at([0.8, -0.1, 0.79])
     yield from sim_fixture(sim, "perception obm")
 
@@ -34,7 +38,8 @@ def sim(test_scene_dir):
 def observe(sim):
     rgb, depth, label = sim.get_camera_image("head_camera")
     im = CalibratedRGBDObservation(
-        rgb, depth,
+        rgb,
+        depth,
         sim.get_camera_intrinsics("head_camera"),
         sim.get_camera_extrinsics("head_camera"),
         label_image=label,
@@ -60,17 +65,22 @@ def hyp_center(h):
 
 
 def things_and_surfaces(memory):
-    things = {k: h for k, h in memory.objects.items()
-              if h.get_feature("category", "thing") == "thing"}
-    surfaces = {k: h for k, h in memory.objects.items()
-                if h.get_feature("category", "thing") in ("surface", "table")}
+    things = {
+        k: h
+        for k, h in memory.objects.items()
+        if h.get_feature("category", "thing") == "thing"
+    }
+    surfaces = {
+        k: h
+        for k, h in memory.objects.items()
+        if h.get_feature("category", "thing") in ("surface", "table")
+    }
     return things, surfaces
 
 
 def find_by_color(things, channel):
     """The hypothesis whose rgb_average is dominated by the given channel."""
-    return max(things.values(),
-               key=lambda h: h.get_feature("rgb_average")[channel])
+    return max(things.values(), key=lambda h: h.get_feature("rgb_average")[channel])
 
 
 def test_perception_detections_match_ground_truth(sim):
@@ -81,10 +91,10 @@ def test_perception_detections_match_ground_truth(sim):
     scene = pipeline.forward(observe(sim)["images"])
     detections = scene.get_ml_object_scene_representation().object_detections
 
-    surfaces = [d for d in detections
-                if d.get_feature("category", "thing") == "surface"]
-    things = [d for d in detections
-              if d.get_feature("category", "thing") == "thing"]
+    surfaces = [
+        d for d in detections if d.get_feature("category", "thing") == "surface"
+    ]
+    things = [d for d in detections if d.get_feature("category", "thing") == "thing"]
     assert len(surfaces) == 1
     assert len(things) == 2
 
@@ -174,8 +184,9 @@ def test_obm_teleported_object(sim):
 
     things, _ = things_and_surfaces(obm.memory)
     world = sim.get_world_state()
-    dists = [np.linalg.norm(hyp_center(h) - world["blue_block"][:3])
-             for h in things.values()]
+    dists = [
+        np.linalg.norm(hyp_center(h) - world["blue_block"][:3]) for h in things.values()
+    ]
     assert min(dists) < CENTER_TOL
 
     stale = obm.memory.objects.get(blue_before.name)
@@ -187,10 +198,14 @@ def test_obm_teleported_object(sim):
 def drake_sim(test_scene_dir):
     from qr_robots.drake.rby1.sim import make_sim
 
-    sim = make_sim(test_scene_dir, {
-        "table": {"file": "table.urdf", "fixed": True, "pos": [0.9, 0, 0]},
-        "block": {"file": "block.urdf", "pos": [0.65, 0, 0.81]},
-    }, mode=SIM_MODE)
+    sim = make_sim(
+        test_scene_dir,
+        {
+            "table": {"file": "table.urdf", "fixed": True, "pos": [0.9, 0, 0]},
+            "block": {"file": "block.urdf", "pos": [0.65, 0, 0.81]},
+        },
+        mode=SIM_MODE,
+    )
     sim.point_head_at([0.65, 0.0, 0.8])
     yield from sim_fixture(sim, "perception obm (drake)")
 
@@ -208,10 +223,10 @@ def test_perception_on_drake_images(drake_sim):
         .get_ml_object_scene_representation()
         .object_detections
     )
-    surfaces = [d for d in detections
-                if d.get_feature("category", "thing") == "surface"]
-    things = [d for d in detections
-              if d.get_feature("category", "thing") == "thing"]
+    surfaces = [
+        d for d in detections if d.get_feature("category", "thing") == "surface"
+    ]
+    things = [d for d in detections if d.get_feature("category", "thing") == "thing"]
     assert len(surfaces) == 1 and len(things) == 1
 
     world = drake_sim.get_world_state()
@@ -225,12 +240,22 @@ def test_obm_on_kinsim_images(test_scene_dir):
     pipeline; the OBM matches the kinematic world state."""
     from qr_kinsim.sim import KinematicSim
 
-    sim = KinematicSim("rby1", objects={
-        "table": {"shape": {"box": [1.2, 0.8, 0.04]}, "pos": [0.9, 0, 0.73],
-                  "fixed": True, "color": [0.6, 0.45, 0.3, 1.0]},
-        "block": {"shape": {"box": [0.08, 0.08, 0.08]}, "pos": [0.65, 0, 0.79],
-                  "color": [0.9, 0.2, 0.1, 1.0]},
-    })
+    sim = KinematicSim(
+        "rby1",
+        objects={
+            "table": {
+                "shape": {"box": [1.2, 0.8, 0.04]},
+                "pos": [0.9, 0, 0.73],
+                "fixed": True,
+                "color": [0.6, 0.45, 0.3, 1.0],
+            },
+            "block": {
+                "shape": {"box": [0.08, 0.08, 0.08]},
+                "pos": [0.65, 0, 0.79],
+                "color": [0.9, 0.2, 0.1, 1.0],
+            },
+        },
+    )
     sim.execute_chain_trajectory("head", [[0.0, 0.7]])
 
     obm = make_obm()
