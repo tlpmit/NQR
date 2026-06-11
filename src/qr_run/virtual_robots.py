@@ -125,6 +125,36 @@ def write_scene_objects(phys, output_dir):
     return objects
 
 
+def write_scene_objects_kinsim(phys, output_dir):
+    """QDDL world → kinematic-sim scene objects: each body's collision mesh
+    exported as STL, with world pose, color, and fixed flag (see
+    qr_kinsim.sim for the object format)."""
+    os.makedirs(output_dir, exist_ok=True)
+    grey = [128, 128, 128]
+    objects = {}
+    for bname, body in phys.get_bodies().items():
+        rgb = phys.get_body_attr(bname, "rgb_average", default=grey)
+        color = [float(c) / 255.0 for c in rgb] + [1.0]
+        matrix = phys.get_body_trans(bname).T()
+        position = matrix[:3, 3].tolist()
+        quaternion = trimesh.transformations.quaternion_from_matrix(matrix).tolist()
+        for link in body.shape.link_list:
+            if not link.collision_meshes:
+                continue
+            assert len(link.collision_meshes) == 1
+            name = link.full_name.replace("::", "__")
+            mesh_path = os.path.join(output_dir, f"{name}.stl")
+            link.collision_meshes[0].export(mesh_path)
+            objects[name] = {
+                "shape": {"mesh": mesh_path},
+                "pos": position,
+                "quat": quaternion,
+                "color": color,
+                "fixed": ("table" in name or "floor" in name),
+            }
+    return objects
+
+
 def initial_conf_vector(world) -> np.ndarray:
     """Canonical RBY1 31-vector from the HPN world's initial robot conf, so
     the simulated robot starts where the planner expects it."""
@@ -160,6 +190,17 @@ def get_virtual_robot(
 
     scene_dir = tempfile.mkdtemp(prefix="qr_scene_")
     world = build_qddl_world(problem, robot_name)
+
+    if virtual_robot_name in ("Ruby_Kinsim", "Rainbow_Kinsim", "Kinsim_Sim"):
+        from qr_kinsim.virtual_robot import Rby1KinsimVirtualMoman
+
+        objects = write_scene_objects_kinsim(world.phys, scene_dir)
+        robot = Rby1KinsimVirtualMoman(
+            objects=objects, model_dir=scene_dir, mode=mode
+        )
+        robot.client.set_robot_conf(initial_conf_vector(world))
+        return robot
+
     objects = write_scene_objects(world.phys, scene_dir)
 
     if virtual_robot_name in ("Ruby_Mujoco_Sim", "Rainbow_Mujoco_Sim"):

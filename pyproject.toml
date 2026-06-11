@@ -106,3 +106,5 @@ PYTHONPATH = ""
 test = "pytest tests -x -q"
 # Kinematic simulator demo (Meshcat at http://localhost:7000)
 kinsim-demo = "python -m qr_kinsim.demo"
+# Combined NQR + HPN run with displays (MuJoCo window + Belief meshcats)
+combined = "python scripts/run_combined.py"

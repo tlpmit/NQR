@@ -18,7 +18,7 @@ pytest.importorskip("RetroPlan", reason="HPN sibling checkout not installed")
 def problem():
     from qr_problem_defs.misc_problems import ruby_1_move_base
 
-    ruby_1_move_base.virtual_robot = "Ruby_Mujoco_Sim"
+    ruby_1_move_base.virtual_robot = "Ruby_Kinsim"
     return ruby_1_move_base
 
 

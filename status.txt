@@ -128,3 +128,44 @@ What the tests verify against ground truth
 Driving belief.update(Action(), None, observation) with RBY1 head-camera images: the block's visible faces and the table top are occupied in the voxel grid, air the camera saw through is free, under the table and the block's interior are shadow (correctly unknown — depth only sees surfaces), and after moving the block, re-observation carves the old location free and marks the new one occupied. Object memory and robot memory match get_world_state() as before.
 
 Per CLAUDE.md's module list, what remains unported is now: Policy (HPN/BTAMP), qr_planning (OMPL2), QDDL problem definitions, and Main/Run orchestration.
+
+-------
+
+Everything is wired and verified (the headless smoke run assembles the full system and reaches the known HPN plan-fail point, which is currently the expected endpoint). Here's how to run it:
+
+Quick start
+
+pixi run combined
+
+That runs ruby_1_move_base live with displays:
+
+- MuJoCo viewer window — the RBY1 robot in the QDDL scene (table, shelves, magenta "grail"), real-time paced so motions are watchable.
+- Belief Meshcat viewers — open in a browser while it runs:
+  - http://localhost:7777 — the voxel grid (occupied / unknown shadows)
+  - http://localhost:7778, http://localhost:7779 — the aux occupancy grids
+- Planner/heuristic traces print to the terminal (--debug-level 1 default), and HPN logs land in ~/HPN_logs.
+
+Variants
+
+# Stop at plan failures with HPN's interactive input() prompt so you can inspect
+pixi run combined -- --interactive
+
+# Replay a recorded golden run through NQR's belief + policy (no live sim;
+# this is the run that perceives all three objects and binds the goal)
+pixi run python scripts/run_combined.py --replay ~/QR_logs/log_2026-05-31_14_42_59_288586
+
+# Record a new run's observations/actions to ~/QR_logs for later replay
+pixi run combined -- --record
+
+# Other problems / robots
+pixi run python scripts/run_combined.py --problem ruby_1 --headless
+
+What to expect
+
+The full pipeline executes — QDDL world → MuJoCo scene → robot moves to the planner's start pose → belief reset → RetroPlan spins up 6 workers and plans — and then hits the known HPN-side regression: the first plan from an empty belief fails (plan_fail: monotonic), exactly as the unmodified old repo does today. So a live run currently ends at PlanFailedException after the setup; the replay variant is the one that shows the belief stack working through a full look→move→look→move sequence. Once the HPN regression is fixed (the May-31 logs prove the configuration used to plan look_region → … → safe_pick_hand), the same pixi run combined command will show the whole behavior live.
+
+One practical note: if a run is killed uncleanly, viewer ports can stay held and the next run fails with "Meshcat failed to open a websocket port" — clear them with:
+
+for p in 7777 7778 7779 8889 5556; do lsof -ti :$p | xargs kill -9; done
+
+The new bits (scripts/run_combined.py, the virtual_robot_mode config knob, the pixi task) are uncommitted — say the word and I'll commit them, or fold them into your next push.
