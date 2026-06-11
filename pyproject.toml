@@ -28,6 +28,9 @@ dependencies = [
     "scikit-learn>=1.3",
     "ncollpyde",   # fast ray-mesh intersection (visibility tracing in the OBM)
     "scikit-image",   # Roboverse raster costmap (undeclared HPN dep)
+    # VAMP motion planner (fork with the rainbow model) — used by HPN's
+    # collision checking when tamp_config.use_vamp_collision_check is on.
+    "vamp-planner @ git+https://github.com/horizon-blue/vamp.git",
 ]
 
 [project.optional-dependencies]

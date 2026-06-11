@@ -16,10 +16,10 @@ pytest.importorskip("RetroPlan", reason="HPN sibling checkout not installed")
 
 @pytest.fixture(scope="module")
 def problem():
-    from qr_problem_defs.misc_problems import ruby_1_move_base
+    from qr_problem_defs.misc_problems import ruby_pick_place_move_base
 
-    ruby_1_move_base.virtual_robot = "Ruby_Kinsim"
-    return ruby_1_move_base
+    ruby_pick_place_move_base.virtual_robot = "Ruby_Kinsim"
+    return ruby_pick_place_move_base
 
 
 def test_qddl_world_to_scene(problem):
@@ -29,29 +29,30 @@ def test_qddl_world_to_scene(problem):
 
     world = build_qddl_world(problem, problem.robot)
     bodies = sorted(world.phys.get_bodies())
-    assert "grail" in bodies and "table" in bodies and "floor" in bodies
+    # problem_green_on_book: a table with a book and two colored spam cans
+    assert "table" in bodies and "book" in bodies
+    assert "shpam1" in bodies and "shpam2" in bodies
 
     objects = write_scene_objects(world.phys, tempfile.mkdtemp(prefix="qr_scene_"))
-    assert any(name.startswith("grail") for name in objects)
+    assert any(name.startswith("book") for name in objects)
     assert any(name.startswith("table") for name in objects)
 
 
 def test_combined_construction(problem):
     """Virtual robot + belief + HPN policy all construct and interoperate."""
     from qr_main.main_virtual_robot import QRMainVR
-    from qr_run.qr_config import HPNConfig, QRSystemConfig
     from qr_run.run import (
         construct_belief_module,
         construct_policy_module,
         get_virtual_robot,
         make_belief_meshcats,
     )
+    from qr_run.standard_configs import adjust_config_for_robot, make_sim_config
 
     robot = get_virtual_robot(problem.virtual_robot, problem.robot, problem=problem)
     try:
-        cfg = QRSystemConfig(
-            segmentation_method="sim",
-            hpn_params=HPNConfig(debug_level=0, interactive=False),
+        cfg = adjust_config_for_robot(
+            problem, make_sim_config(interactive=False, debug_level=0)
         )
         qr_main = QRMainVR(robot, cfg)
         m, a0, a1 = make_belief_meshcats(problem.partially_observed)
